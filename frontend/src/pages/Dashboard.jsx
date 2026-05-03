@@ -7,7 +7,7 @@ export default function Dashboard() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    getMetrics(1).then(setData);
+    getMetrics("ThorlapatiRahul").then(setData);
   }, []);
 
   if (!data) {
