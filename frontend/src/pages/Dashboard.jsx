@@ -5,7 +5,7 @@ import MetricsChart from "../components/MetricsChart";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
-  const [username, setUsername] = useState("ThorlapatiRahul");
+  const [username, setUsername] = useState("Thorlapati Rahul");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
