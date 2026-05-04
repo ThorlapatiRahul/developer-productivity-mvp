@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const BASE_URL = "https://developer-productivity-mvp-des3.onrender.com";
 
 export const getMetrics = async (username) => {
