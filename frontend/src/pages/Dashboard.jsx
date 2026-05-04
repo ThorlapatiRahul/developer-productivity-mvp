@@ -5,12 +5,29 @@ import MetricsChart from "../components/MetricsChart";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
+  const [username, setUsername] = useState("ThorlapatiRahul");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getMetrics("ThorlapatiRahul").then(setData);
-  }, []);
+    setLoading(true);
 
-  if (!data) {
+    getMetrics(username)
+      .then((res) => {
+        setData(res);
+        setError(null);
+      })
+      .catch(() => {
+        setError("Failed to load data. Check username or server.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+  }, [username]);
+
+  // 🔄 Loading UI
+  if (loading) {
     return (
       <h1 style={{ textAlign: "center", marginTop: "40px" }}>
         Loading...
@@ -18,17 +35,42 @@ export default function Dashboard() {
     );
   }
 
+  // ❌ Error UI
+  if (error) {
+    return (
+      <h2 style={{ textAlign: "center", color: "red", marginTop: "40px" }}>
+        {error}
+      </h2>
+    );
+  }
+
   const cards = [
     { title: "Lead Time", value: data.leadTime },
     { title: "Cycle Time", value: data.cycleTime },
-    { title: "Bug Rate", value: Number(data.bugRate).toFixed(1) }, // ✅ fixed
+    { title: "Bug Rate", value: Number(data.bugRate).toFixed(1) },
     { title: "Deployment Frequency", value: data.deploymentFrequency },
     { title: "PR Throughput", value: data.prThroughput }
   ];
 
   return (
     <div className="container">
-      
+
+      {/* 🔍 USER INPUT */}
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter GitHub username"
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            width: "250px"
+          }}
+        />
+      </div>
+
+      {/* 🧠 TITLE */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,7 +78,7 @@ export default function Dashboard() {
         Developer Productivity Dashboard
       </motion.h1>
 
-      {/* METRICS */}
+      {/* 📊 METRICS */}
       <div className="metrics-grid">
         {cards.map((card, i) => (
           <motion.div
@@ -46,12 +88,8 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            {/* ✅ LABEL */}
-            <div className="metric-title">
-              {card.title}
-            </div>
+            <div className="metric-title">{card.title}</div>
 
-            {/* ✅ VALUE */}
             <motion.div
               className="metric-value"
               initial={{ scale: 0.8 }}
@@ -64,10 +102,10 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* CHART */}
+      {/* 📈 CHART */}
       <MetricsChart data={data} />
 
-      {/* INSIGHTS */}
+      {/* 💡 INSIGHTS */}
       <div className="insights">
         {data.insights.map((insight, i) => (
           <motion.div
